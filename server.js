@@ -18,6 +18,8 @@ app.use(express.json()); // For parsing JSON request bodies
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/spaces", require("./routes/spaceRoutes"));
+// Use the protected routes
+app.use("/api", require("./routes/protectedRoute"));
 
 // Base route for testing server connection
 app.get("/", (req, res) => {
