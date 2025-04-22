@@ -8,9 +8,18 @@ const spaceSchema = new mongoose.Schema(
     },
     description: String,
     location: {
-      address: String,
-      city: String,
-      country: String,
+      address: {
+        type: String,
+        required: true, // Ensures address is required
+      },
+      city: {
+        type: String,
+        required: true, // Ensures city is required
+      },
+      country: {
+        type: String,
+        required: true, // Ensures country is required
+      },
     },
     amenities: [String], // e.g., ['wifi', 'coffee', 'kitchen']
     price: {
