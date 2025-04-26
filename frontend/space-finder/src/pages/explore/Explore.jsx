@@ -26,7 +26,10 @@ export default function Explore() {
           className="border rounded-lg p-4 shadow hover:shadow-lg transition"
         >
           <img
-            src={space.gallery[0]?.url}
+            src={
+              space.images?.[0] ||
+              "https://dummyimage.com/100x50/000/fff&text=No+Image"
+            }
             alt={space.title}
             className="w-full h-48 object-cover rounded"
           />

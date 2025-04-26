@@ -1,5 +1,6 @@
 import { useCreateSpace } from "../../../context/CreateSpaceContext";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function Gallery() {
   const { spaceData, dispatch, setStep } = useCreateSpace();
@@ -7,27 +8,35 @@ export default function Gallery() {
 
   const addImage = () => {
     if (imageUrl.trim() === "") return;
+
+    const newImage = {
+      url: imageUrl.trim(),
+      type: "image/url", // just a placeholder since you're using URLs
+    };
+
     dispatch({
       type: "UPDATE_FIELD",
       field: "images",
-      value: [...(spaceData.images || []), imageUrl],
+      value: [...(spaceData.images || []), newImage],
     });
+
     setImageUrl("");
   };
 
   const handleNext = () => {
-    if (!spaceData.images || spaceData.images.length === 0) {
-      alert("Add at least one image.");
+    if (!spaceData.images || spaceData.images.length < 3) {
+      toast.error("Please add at least 3 images.");
       return;
     }
-    setStep(3);
+
+    setStep(3); // Go to next step
   };
 
   return (
     <div className="space-y-4">
       <input
         type="text"
-        placeholder="Image URL"
+        placeholder="Paste Image URL"
         value={imageUrl}
         onChange={(e) => setImageUrl(e.target.value)}
         className="w-full p-2 border rounded"
@@ -43,8 +52,8 @@ export default function Gallery() {
         {spaceData.images?.map((img, idx) => (
           <img
             key={idx}
-            src={img}
-            alt="preview"
+            src={img.url}
+            alt={`preview-${idx}`}
             className="w-full h-32 object-cover rounded"
           />
         ))}
