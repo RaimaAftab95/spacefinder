@@ -5,14 +5,16 @@ const Space = require("../models/space");
 // @access  Private
 exports.createSpace = async (req, res) => {
   try {
+    console.log("Request Body:", req.body);
     const { title, description, location, price, amenities } = req.body;
 
-    // New Step 🆕 : Map the uploaded files into array of { url, type }
+    //Map the uploaded files into array of { url, type }
     const images = req.files.map((file) => ({
       url: file.path, // Multer + Cloudinary gives 'path' for the uploaded image URL
       type: file.mimetype, // Mime type e.g., image/jpeg, image/png
     }));
 
+    // Ensure createdBy is set from req.user._id
     const space = new Space({
       title,
       description,
@@ -20,7 +22,8 @@ exports.createSpace = async (req, res) => {
       amenities: amenities ? JSON.parse(amenities) : [], // same for amenities (optional)
       price,
       images,
-      createdBy: req.user, // req.user comes from authMiddleware
+      // createdBy: req.user, // req.user comes from authMiddleware
+      createdBy: req.user.id,
     });
 
     await space.save();
@@ -28,7 +31,7 @@ exports.createSpace = async (req, res) => {
     res.status(201).json({ message: "Space created successfully", space });
   } catch (error) {
     console.error("Create Space Error:", error.message);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: error.message || "Server Error" });
   }
 };
 

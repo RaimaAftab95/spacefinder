@@ -28,8 +28,14 @@ const spaceSchema = new mongoose.Schema(
     },
     images: [
       {
-        url: String,
-        type: String,
+        url: {
+          type: String,
+          required: true,
+        },
+        type: {
+          type: String,
+          required: true,
+        },
       },
     ], // URLs of uploaded images
     createdBy: {
