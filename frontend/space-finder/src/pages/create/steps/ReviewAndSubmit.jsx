@@ -1,23 +1,26 @@
 import { useCreateSpace } from "../../../context/CreateSpaceContext";
 import { useAuthContext } from "../../../context/AuthContext";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function ReviewAndSubmit() {
   const { spaceData, setStep } = useCreateSpace();
   const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
 
-      // Append all regular fields
       formData.append("title", spaceData.title);
       formData.append("description", spaceData.description);
       formData.append("price", spaceData.price);
-      formData.append("location", JSON.stringify(spaceData.location)); // Convert object to string
-      formData.append("amenities", JSON.stringify(spaceData.amenities)); // Convert array to string
+      formData.append("location", JSON.stringify(spaceData.location));
+      formData.append("amenities", JSON.stringify(spaceData.amenities));
+      formData.append("availability", JSON.stringify(spaceData.availability));
 
-      // Append images (spaceData.images should be File objects now)
       spaceData.images.forEach((imageFile) => {
         formData.append("images", imageFile);
       });
@@ -27,19 +30,22 @@ export default function ReviewAndSubmit() {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${user?.token}`, // ✅ Only Authorization header, NO content-type here!
+            Authorization: `Bearer ${user?.token}`,
           },
           body: formData,
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create space");
+        const errRes = await response.json();
+        throw new Error(errRes.message || "Failed to create space");
       }
 
       const data = await response.json();
       toast.success("Space created successfully! 🎉");
-      // Optionally reset form or redirect here
+      navigate("/dashboard");
+      setStep(0); // Optionally go back to first step
+      // Optionally clear context or navigate away
     } catch (error) {
       toast.error("Error: " + error.message);
     }
@@ -98,6 +104,7 @@ export default function ReviewAndSubmit() {
         </button>
         <button
           onClick={handleSubmit}
+          disabled={loading}
           className="bg-blue-600 text-white px-4 py-2 rounded"
         >
           Submit

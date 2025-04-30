@@ -5,15 +5,18 @@ export const AuthContext = createContext();
 
 // Initial state
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: JSON.parse(localStorage.getItem("user")) || null, // user object should include token
 };
 
 // Reducer function to handle actions
 const authReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
+      localStorage.setItem("user", JSON.stringify(action.payload)); // persist login
       return { user: action.payload };
     case "LOGOUT":
+      localStorage.removeItem("user");
+
       return { user: null };
     default:
       return state;
@@ -23,11 +26,6 @@ const authReducer = (state, action) => {
 // Provider component
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-
-  // Save user to local storage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(state.user));
-  }, [state.user]);
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>
