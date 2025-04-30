@@ -13,6 +13,9 @@ function App() {
     <>
       <Toaster position="top-right" reverseOrder={false} />
       <Navbar />
+      <div className="text-red-500 text-2xl font-bold">
+        Tailwind is working!
+      </div>
       <Routes>
         <Route path="/" element={<Explore />} />
         <Route path="/login" element={<Login />} />

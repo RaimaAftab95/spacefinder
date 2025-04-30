@@ -48,16 +48,45 @@ export default function Explore() {
             to={`/space/${space._id}`}
             className="border rounded-lg p-4 shadow hover:shadow-lg transition"
           >
-            <img
-              src={
-                space.images?.[0] ||
-                "https://dummyimage.com/100x50/000/fff&text=No+Image"
-              }
-              alt={space.title}
-              className="w-full h-48 object-cover rounded"
-            />
+            <div className="flex gap-2 overflow-x-auto">
+              {space.images?.length > 0 ? (
+                space.images.map((img) => (
+                  <img
+                    key={img._id}
+                    src={img.url}
+                    alt={space.title}
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                ))
+              ) : (
+                <img
+                  src="https://dummyimage.com/100x50/000/fff&text=No+Image"
+                  alt="No image"
+                  className="w-20 h-20 object-cover rounded"
+                />
+              )}
+            </div>
             <h2 className="mt-2 text-lg font-semibold">{space.title}</h2>
-            <p className="text-sm text-gray-600">{space.location?.city}</p>
+            <p className="text-sm text-red-600">{space.location?.city}</p>
+            <p className="text-sm text-gray-700 font-medium">
+              From ${space.price}/month
+            </p>
+            {/* Amenities (first 2 or 3) */}
+            <div className="flex flex-wrap gap-1 text-xs text-gray-500 mt-1">
+              {space.amenities?.slice(0, 3).map((item, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 bg-gray-100 rounded-full text-xs"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+
+            {/* Short description */}
+            <p className="text-sm mt-1 text-gray-600 line-clamp-2">
+              {space.description?.replace(/["]/g, "").trim().slice(0, 100)}...
+            </p>
           </Link>
         ))
       )}
