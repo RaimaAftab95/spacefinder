@@ -5,25 +5,33 @@ import Explore from "./pages/explore/Explore";
 import SpaceDetails from "./pages/space/SpaceDetails";
 // import Dashboard from "./pages/dashboard/DashboardHome";
 import CreateSpaceLayout from "./pages/create/CreateSpaceLayout";
+import { CreateSpaceProvider } from "./context/CreateSpaceContext";
 import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
+import { AuthContextProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
-      <Navbar />
-      <div className="text-red-500 text-2xl font-bold">
-        Tailwind is working!
-      </div>
-      <Routes>
-        <Route path="/" element={<Explore />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/space/:id" element={<SpaceDetails />} />
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
-        <Route path="/create" element={<CreateSpaceLayout />} />
-      </Routes>
+      <AuthContextProvider>
+        <Toaster position="top-right" reverseOrder={false} />
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Explore />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/space/:id" element={<SpaceDetails />} />
+          {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+          <Route
+            path="/create"
+            element={
+              <CreateSpaceProvider>
+                <CreateSpaceLayout />
+              </CreateSpaceProvider>
+            }
+          />
+        </Routes>
+      </AuthContextProvider>
     </>
   );
 }

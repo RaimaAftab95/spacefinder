@@ -4,16 +4,20 @@ const CreateSpaceContext = createContext();
 
 const initialState = {
   step: 1,
-  data: {
+  spaceData: {
     title: "",
     description: "",
     price: "",
+    type: "",
     images: [],
     address: "",
     city: "",
     country: "",
     amenities: [],
-    availability: "",
+    availability: {
+      startDate: "",
+      endDate: "",
+    },
   },
 };
 
@@ -26,7 +30,7 @@ function reducer(state, action) {
     case "SET_DATA":
       return {
         ...state,
-        data: { ...state.data, ...action.payload },
+        spaceData: { ...state.spaceData, ...action.payload },
       };
     case "RESET":
       return initialState;

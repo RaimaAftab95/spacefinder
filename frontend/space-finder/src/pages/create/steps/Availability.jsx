@@ -1,8 +1,9 @@
 import { useCreateSpace } from "../../../context/CreateSpaceContext";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function Availability() {
-  const { spaceData, dispatch, setStep } = useCreateSpace();
+  const { spaceData, setData, nextStep } = useCreateSpace();
   const [availability, setAvailability] = useState(
     spaceData.availability || {}
   );
@@ -17,17 +18,12 @@ export default function Availability() {
 
   const handleNext = () => {
     if (!availability.startDate || !availability.endDate) {
-      alert("Please select start and end dates.");
+      toast.error("Please select both start and end dates.");
       return;
     }
 
-    dispatch({
-      type: "UPDATE_FIELD",
-      field: "availability",
-      value: availability,
-    });
-
-    setStep(6); // Proceed to review and submit
+    setData({ availability }); // ✅ update context with availability
+    nextStep(); // ✅ proceed to next step (e.g., review/submit)
   };
 
   return (

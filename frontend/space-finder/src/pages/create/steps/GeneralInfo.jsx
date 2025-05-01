@@ -1,14 +1,11 @@
 import { useCreateSpace } from "../../../context/CreateSpaceContext";
 
 export default function GeneralInfo() {
-  const { spaceData, dispatch, setStep } = useCreateSpace();
+  const { spaceData, setData, nextStep } = useCreateSpace();
 
   const handleChange = (e) => {
-    dispatch({
-      type: "UPDATE_FIELD",
-      field: e.target.name,
-      value: e.target.value,
-    });
+    const { name, value } = e.target;
+    setData({ [name]: value });
   };
 
   const handleNext = () => {
@@ -21,7 +18,7 @@ export default function GeneralInfo() {
       alert("All fields are required.");
       return;
     }
-    setStep(2);
+    nextStep();
   };
 
   return (
@@ -30,14 +27,14 @@ export default function GeneralInfo() {
         type="text"
         name="title"
         placeholder="Title"
-        value={spaceData.title || ""}
+        value={spaceData.title}
         onChange={handleChange}
         className="w-full p-2 border rounded"
       />
       <textarea
         name="description"
         placeholder="Description"
-        value={spaceData.description || ""}
+        value={spaceData.description}
         onChange={handleChange}
         className="w-full p-2 border rounded"
       />
@@ -45,7 +42,7 @@ export default function GeneralInfo() {
         type="number"
         name="price"
         placeholder="Price per night"
-        value={spaceData.price || ""}
+        value={spaceData.price}
         onChange={handleChange}
         className="w-full p-2 border rounded"
       />

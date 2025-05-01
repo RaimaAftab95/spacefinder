@@ -1,10 +1,11 @@
 import { useCreateSpace } from "../../../context/CreateSpaceContext";
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 const AMENITIES = ["wifi", "coffee", "kitchen", "parking", "air conditioning"];
 
 export default function Amenities() {
-  const { spaceData, dispatch, setStep } = useCreateSpace();
+  const { spaceData, setData, nextStep } = useCreateSpace();
   const [selected, setSelected] = useState(spaceData.amenities || []);
 
   const toggleAmenity = (amenity) => {
@@ -17,17 +18,12 @@ export default function Amenities() {
 
   const handleNext = () => {
     if (selected.length === 0) {
-      alert("Please select at least one amenity.");
+      toast.error("Please select at least one amenity.");
       return;
     }
 
-    dispatch({
-      type: "UPDATE_FIELD",
-      field: "amenities",
-      value: selected,
-    });
-
-    setStep(5);
+    setData({ amenities: selected }); // ✅ update amenities in context
+    nextStep(); // ✅ go to next step
   };
 
   return (

@@ -5,14 +5,34 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function ReviewAndSubmit() {
-  const { spaceData, setStep } = useCreateSpace();
+  const { spaceData, prevStep } = useCreateSpace();
   const { user } = useAuthContext();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     try {
+      setLoading(true);
+
       const formData = new FormData();
+      if (
+        !spaceData.title ||
+        !spaceData.description ||
+        !spaceData.price ||
+        !spaceData.location ||
+        !spaceData.amenities?.length ||
+        !spaceData.availability ||
+        !spaceData.images?.length
+      ) {
+        toast.error("Please complete all required fields before submitting.");
+        return;
+      }
+
+      if (!user?.token) {
+        toast.error("Please login to submit your space.");
+        navigate("/login");
+        return;
+      }
 
       formData.append("title", spaceData.title);
       formData.append("description", spaceData.description);
@@ -41,13 +61,13 @@ export default function ReviewAndSubmit() {
         throw new Error(errRes.message || "Failed to create space");
       }
 
-      const data = await response.json();
+      await response.json();
       toast.success("Space created successfully! 🎉");
       navigate("/dashboard");
-      setStep(0); // Optionally go back to first step
-      // Optionally clear context or navigate away
     } catch (error) {
       toast.error("Error: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,21 +103,30 @@ export default function ReviewAndSubmit() {
         <div>
           <span className="font-semibold">Images:</span>
           <div className="grid grid-cols-3 gap-2 mt-2">
-            {spaceData.images?.map((img, idx) => (
-              <img
-                key={idx}
-                src={typeof img === "string" ? img : URL.createObjectURL(img)}
-                alt={`preview-${idx}`}
-                className="w-full h-24 object-cover rounded"
-              />
-            ))}
+            {spaceData.images?.map((img, idx) => {
+              const imageUrl =
+                typeof img === "string"
+                  ? img
+                  : img instanceof Blob
+                  ? URL.createObjectURL(img)
+                  : null;
+
+              return (
+                <img
+                  key={idx}
+                  src={imageUrl}
+                  alt={`preview-${idx}`}
+                  className="w-full h-24 object-cover rounded"
+                />
+              );
+            })}
           </div>
         </div>
       </div>
 
       <div className="flex gap-4 mt-6">
         <button
-          onClick={() => setStep(5)}
+          onClick={prevStep}
           className="bg-gray-500 text-white px-4 py-2 rounded"
         >
           Edit
@@ -105,9 +134,11 @@ export default function ReviewAndSubmit() {
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className={`bg-blue-600 text-white px-4 py-2 rounded ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>
